@@ -1,7 +1,26 @@
 # Invicti Platform On-Premises Tools
 
-Single-file lifecycle managers for the Invicti Platform on-premises edition, deployed by
-Helm onto a single-node Kubernetes cluster or an existing one.
+> [!WARNING]
+> **Clean, dedicated host only.**
+>
+> Run these scripts on a clean, dedicated host with no existing Kubernetes cluster, no
+> KEDA, and no other production workloads. That is the only configuration they have been
+> tested against. For a host that already runs other services, or an existing cluster,
+> follow the documented Helm steps instead:
+> [docs.invicti.com/ip/helm-installation](https://docs.invicti.com/ip/helm-installation).
+>
+> They install Kubernetes and Helm 3, disable the bundled Traefik to free ports 80 and
+> 443, expand the root LVM volume into unallocated space, edit `/etc/hosts`, and install
+> KEDA as a chart subcomponent. On RHEL they also apply SELinux policy packages and
+> change firewalld zones to trust the cluster CIDRs. `uninstall --purge` removes
+> cluster-scoped KEDA CRDs, ClusterRoles and webhooks, which breaks anything else in the
+> cluster that uses KEDA.
+>
+> `--dry-run` prints every command without executing it.
+
+Single-file lifecycle managers for the Invicti Platform on-premises edition. Each one
+builds a single-node Kubernetes cluster on a dedicated host and deploys the platform
+onto it by Helm.
 
 Each script installs, checks, upgrades, reconfigures, backs up, restores and removes the
 platform. Pick the one that matches the host distribution:
@@ -22,8 +41,8 @@ sudo ./rhel/invicti-platform-rhel.sh install \
 ```
 
 Run `check` first on an unfamiliar host — it runs every preflight test and changes
-nothing. `--help` lists every flag; each flag has a matching environment variable for
-non-interactive use.
+nothing, and `--dry-run` prints what any command would do without doing it. `--help`
+lists every flag; each flag has a matching environment variable for non-interactive use.
 
 ## Commands
 

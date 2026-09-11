@@ -1,5 +1,23 @@
 # RHEL script
 
+> [!WARNING]
+> **Clean, dedicated host only.**
+>
+> Run this on a clean, dedicated host with no existing Kubernetes cluster, no KEDA, and
+> no other production workloads. That is the only configuration it has been tested
+> against. For a host that already runs other services, or an existing cluster, follow
+> the documented Helm steps instead:
+> [docs.invicti.com/ip/helm-installation](https://docs.invicti.com/ip/helm-installation).
+>
+> It installs k3s or RKE2, disables the bundled Traefik so ports 80 and 443 are free,
+> installs Helm 3, applies SELinux policy packages, changes firewalld zones to trust the
+> cluster CIDRs, expands the root LVM volume into unallocated space, edits `/etc/hosts`,
+> and installs KEDA as a chart subcomponent. `uninstall --purge` removes cluster-scoped
+> KEDA CRDs, ClusterRoles and webhooks, which breaks anything else in the cluster that
+> uses KEDA.
+>
+> `--dry-run` prints every command without executing it.
+
 `invicti-platform-rhel.sh` — Invicti Platform on-premises on Red Hat Enterprise Linux 9
 and its rebuilds, onto k3s (default) or RKE2.
 
@@ -29,6 +47,7 @@ refused up front with a pointer to the Debian script.
 --firewalld <configure|disable|skip>  default configure, keeps the firewall on
 --scanner-min-replicas <n|default>    warm DAST scanners; auto-sized by default
 --purge-data / --purge / --purge-all  uninstall scope, least to most destructive
+--dry-run                             print every command without running it
 ```
 
 `--selinux permissive` is a runtime `setenforce 0` only. `/etc/selinux/config` is never

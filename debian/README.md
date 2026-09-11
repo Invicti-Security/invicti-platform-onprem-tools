@@ -1,5 +1,22 @@
 # Debian and Ubuntu script
 
+> [!WARNING]
+> **Clean, dedicated host only.**
+>
+> Run this on a clean, dedicated host with no existing Kubernetes cluster, no KEDA, and
+> no other production workloads. That is the only configuration it has been tested
+> against. For a host that already runs other services, or an existing cluster, follow
+> the documented Helm steps instead:
+> [docs.invicti.com/ip/helm-installation](https://docs.invicti.com/ip/helm-installation).
+>
+> It installs k3s, disables k3s's bundled Traefik so ports 80 and 443 are free, replaces
+> Helm 4 with Helm 3, expands the root LVM volume into unallocated space, edits
+> `/etc/hosts`, and installs KEDA as a chart subcomponent. `uninstall --purge` removes
+> cluster-scoped KEDA CRDs, ClusterRoles and webhooks, which breaks anything else in the
+> cluster that uses KEDA.
+>
+> `--dry-run` prints every command without executing it.
+
 `invicti-platform.sh` — Invicti Platform on-premises on Ubuntu or Debian, onto k3s.
 
 ```bash
